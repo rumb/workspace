@@ -7,7 +7,7 @@ case $1 in
   "a")
     dev_name=`printf "vnet%03d" $3`
     mac=`printf "52:54:00:22:00:%02X" $3`
-    sudo virsh attach-interface $2 --type bridge --source virbr0 --model virtio --target ${dev_name} --mac ${mac}
+    sudo virsh attach-interface $2 --persistent --type bridge --source virbr0 --model virtio --target ${dev_name} --mac ${mac}
     ;;
   "d")
     mac=`printf "52:54:00:22:00:%02X" $3`

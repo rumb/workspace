@@ -6,9 +6,9 @@
 #pair+=("vnet1" "vnet5")
 #pair+=("vnet7" "vnet6")
 
-pair=("vnet13" "vnet18")
-pair+=("vnet16" "vnet19")
-pair+=("vnet17" "vnet22")
+pair=("vnet13" "vnet4")
+pair+=("vnet2" "vnet19")
+pair+=("vnet3" "vnet22")
 pair+=("vnet12" "vnet21")
 pair+=("vnet15" "vnet20")
 pair+=("vnet11" "vnet23")
@@ -51,8 +51,7 @@ case $1 in
       ifconfig ${br_name} up
 
       ovs-ofctl del-flows ${br_name}
-      ovs-ofctl add-flow ${br_name} in_port=1,action=output:2
-      ovs-ofctl add-flow ${br_name} in_port=2,action=output:1
+      ovs-ofctl add-flow ${br_name} action=flood
       ovs-ofctl show ${br_name}
     done
     ;;

@@ -9,7 +9,9 @@ USERNAME="root"
 PASSWORD="0000"
 
 CONTROLLER="192.168.122.2"
-SWITCH="192.168.122.110"
+SWITCH=("192.168.122.110")
+SWITCH+=("192.168.122.120")
+SWITCH+=("192.168.122.130")
 
 HOST=("192.168.122.140")
 HOST+=("192.168.122.150")
@@ -29,10 +31,29 @@ send \"${PASSWORD}\n\"
 }
 expect \"#\"
 send \"ovs-vsctl add-port ovs eth4\n\"
-send \"ovs-ofctl add-flow ovs action=output:ALL\n\"
 send \"exit\n\"
 interact
 "
+
+for i in "${SWITCH[@]}"
+do
+  expect -c "
+  set timeout -1
+  spawn ssh ${USERNAME}@$i
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@$i's password:\"
+  send \"${PASSWORD}\n\"
+} \"${USERNAME}@$i's password:\" {
+send \"${PASSWORD}\n\"
+}
+expect \"#\"
+send \"ovs-ofctl del-flows ovs\n\"
+send \"ovs-ofctl add-flow ovs action=all\n\"
+send \"exit\n\"
+interact
+"
+done
 
 expect -c "
 set timeout -1

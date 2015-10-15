@@ -50,7 +50,7 @@ class EtherHeader
   end
 
 
-  def uint8                                                                                                                                                                [17/1947]
+  def uint8
     r = @frame[@ptr].ord
     @ptr += 1
     r
