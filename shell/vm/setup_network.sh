@@ -35,8 +35,7 @@ case $1 in
     ;;
   "f")
     if [ "$2" = "a" ]; then
-      ovs-ofctl add-flow ovs in_port=1,action=output:2
-      ovs-ofctl add-flow ovs in_port=2,action=output:1
+      ovs-ofctl add-flow ovs action=output:ALL
     fi
     ovs-ofctl dump-flows ovs
     ;;
