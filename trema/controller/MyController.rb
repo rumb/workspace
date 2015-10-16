@@ -1,8 +1,6 @@
-#my controlelr
+#My Controlelr
 $LOAD_PATH.unshift __dir__
-require 'pio/open_flow10/match'
-require 'pio/parser'
-
+require 'pio'
 require 'myfib'
 
 class MyController < Trema::Controller
@@ -19,25 +17,17 @@ class MyController < Trema::Controller
   end
 
   def switch_ready (datapath_id)
-
     logger.info "#{datapath_id.to_hex} is connected"
     init_flow(datapath_id)
 
-    fib = @fib.fetch(datapath_id.to_hex)
-    fib.list.each { |entry|
-      p entry.ipaddr
-      options = {
-        ether_type: 2048,
-        ip_protocol: 17,
-        ip_destination_address: entry.ipaddr,
-        transport_destination_port: 5002
+    fib = @fib[datapath_id.to_hex]
+    if fib.nil?
+      return
+    else
+      fib.list.each { |entry|
+        set_fib_entry(datapath_id, entry)
       }
-      send_flow_mod_add(datapath_id,
-                        match: Match.new( options ),
-                        actions: [SetEtherDestinationAddress.new(entry.hwaddr),
-                          SendOutPort.new(entry.port)]
-                       )
-    }
+    end
   end
 
   def packet_in (datapath_id, message)
@@ -46,15 +36,10 @@ class MyController < Trema::Controller
     when Arp::Request
       handle_arp_request(datapath_id, message)
     when Arp::Reply
-    when Pio::Parser::IPv4Packet
-      fib = @fib.fetch(datapath_id.to_hex)
-      next_hop = fib.find_by_prefix( data.ip_destination_address )
-      send_packet_out(datapath_id,
-                      packet_in: message,
-                      actions: [SetEtherDestinationAddress.new(next_hop.hwaddr),
-                        SendOutPort.new(next_hop.port)]
-                     )
-                     logger.info "#{datapath_id.to_hex} send packet"
+    when Parser::IPv4Packet
+      puts "Unexpected Ipv4packet message"
+      puts message
+      puts ""
     else
       puts "Unexpected Packet_in message"
       puts message
@@ -83,11 +68,18 @@ class MyController < Trema::Controller
                    )
   end
 
-  def flow_mod (message, port_no)
-    send_flow_mod_add(message.datapath_id,
-                      match: ExactMatch.new(message),
-                      actions: SendOutPort.new(port_no)
+  def set_fib_entry (datapath_id, entry)
+    options = {
+      ether_type: 2048,
+      ip_protocol: 17,
+      ip_destination_address: entry.ipaddr,
+      transport_destination_port: 5002
+    }
+    send_flow_mod_add(datapath_id,
+                      match: Match.new( options ),
+                      actions: [SetEtherDestinationAddress.new(entry.hwaddr),
+                        SendOutPort.new(entry.port)]
                      )
-  end
 
+  end
 end

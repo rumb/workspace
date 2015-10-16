@@ -5,6 +5,8 @@ class MyFIB_Entry
   attr_reader :hwaddr
   attr_reader :ipaddr
   attr_reader :masklen
+  attr_reader :priority
+  attr_reader :name
 
   def initialize options
     @port = options[ :port ]
@@ -12,6 +14,7 @@ class MyFIB_Entry
     addr = "#{options[ :ipaddr ]}/#{ options[ :masklen ]}"
     @ipaddr = Pio::IPv4Address.new( addr )
     @masklen = options[ :masklen ]
+    @priority = options[ :priority ]
   end
 
   def has? mac
