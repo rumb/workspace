@@ -76,6 +76,7 @@ class MyController < Trema::Controller
       transport_destination_port: 5002
     }
     send_flow_mod_add(datapath_id,
+                      priority: entry.priority,
                       match: Match.new( options ),
                       actions: [SetEtherDestinationAddress.new(entry.hwaddr),
                         SendOutPort.new(entry.port)]

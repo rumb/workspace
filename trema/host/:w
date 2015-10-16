@@ -1,20 +1,22 @@
 #!/usr/bin/ruby
 require 'socket'
 require 'openssl'
-require "./myname"
+require "myname"
 
-name_bak = "/sample/test"
+name_bak = "test/"
 
 while true do
 ## Ask Content Name
-print 'Enter content name : /'
+p 'Enter content name'
+print '/'
 name = gets.chop
 
-if name.empty?
+if name.nil?
   name = name_bak
 else
   name_bak = name
 end
+puts name
 
 ipaddr = Ipv4Name.get_ipaddr(name)
 udp = UDPSocket.open()
@@ -22,7 +24,5 @@ udp = UDPSocket.open()
 sockaddr = Socket.pack_sockaddr_in(5002, ipaddr)
 udp.send(name, 0, sockaddr)
 udp.close
-
-puts "send content /#{name} ( #{ipaddr} )"
 
 end

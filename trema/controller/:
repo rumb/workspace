@@ -11,11 +11,11 @@ class MyFIB_Entry
 
   def initialize options
     @port = options[ :port ]
-    @hwaddr = Pio::Mac.new( options[ :hwaddr ] || "ff:ff:ff:ff:ff:ff" )
+    @hwaddr = Pio::Mac.new( options[ :hwaddr ] )
     @name = MyName.new( options[ :name ] )
     @ipaddr = Pio::IPv4Address.new( @name.ipaddr_mask )
     @masklen = @name.masklen
-    @priority = @masklen * 1000
+    @priority = @masklen * 10000
   end
 
 end
