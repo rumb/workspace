@@ -1,25 +1,23 @@
 require "pio"
+require "myname"
 
 class MyFIB_Entry
   attr_reader :port
   attr_reader :hwaddr
   attr_reader :ipaddr
   attr_reader :masklen
-  attr_reader :priority
   attr_reader :name
+  attr_reader :priority
 
   def initialize options
     @port = options[ :port ]
     @hwaddr = Pio::Mac.new( options[ :hwaddr ] )
-    addr = "#{options[ :ipaddr ]}/#{ options[ :masklen ]}"
-    @ipaddr = Pio::IPv4Address.new( addr )
-    @masklen = options[ :masklen ]
+    @name = MyName.new( options[ :name ] )
+    @ipaddr = Pio::Ipv4Address.new( @name.ipaddr )
+    @masklen = @name.masklen
     @priority = options[ :priority ]
   end
 
-  def has? mac
-    mac == hwaddr
-  end
 end
 
 class MyFIB
