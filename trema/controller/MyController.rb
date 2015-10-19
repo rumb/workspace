@@ -37,13 +37,11 @@ class MyController < Trema::Controller
       handle_arp_request(datapath_id, message)
     when Arp::Reply
     when Parser::IPv4Packet
-      puts "Unexpected Ipv4packet message"
-      puts message
-      puts ""
+      print "Unexpected Ipv4packet message"
+      puts message.data
     else
-      puts "Unexpected Packet_in message"
+      print "Unexpected Packet_in message"
       puts message
-      puts ""
     end
   end
 
