@@ -29,6 +29,7 @@ echo "##### INSTALL NETWORKING TOOLS #####"
 yum -y groupinstall "Networking Tools"
 yum -y install net-tools bridge-utils
 yum -y install tcpdump traceroute
+yum -y install ntpdate
 yum -y install wget
 
 echo "##### INSTALL DEVELOPMENT TOOLS #####"

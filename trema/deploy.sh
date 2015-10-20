@@ -19,13 +19,16 @@ HOST+=("192.168.122.160")
 HOST+=("192.168.122.170")
 HOST+=("192.168.122.180")
 
-expect -c "
-set timeout -1
-spawn ssh ${USERNAME}@${SWITCH}
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@${SWITCH}'s password:\"
-send \"${PASSWORD}\n\"
+flag=false
+
+if $flag ; then
+  expect -c "
+  set timeout -1
+  spawn ssh ${USERNAME}@${SWITCH}
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@${SWITCH}'s password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@${SWITCH}'s password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -54,6 +57,7 @@ send \"exit\n\"
 interact
 "
 done
+fi
 
 expect -c "
 set timeout -1
@@ -84,13 +88,14 @@ interact
 "
 done
 
-expect -c "
-set timeout -1
-spawn ssh -l ${USERNAME} ${SWITCH}
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@${SWITCH}'s password:\"
-send \"${PASSWORD}\n\"
+if $flag ; then
+  expect -c "
+  set timeout -1
+  spawn ssh -l ${USERNAME} ${SWITCH}
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@${SWITCH}'s password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@${SWITCH}'s password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -99,3 +104,4 @@ send \"ovs-vsctl del-port ovs eth4\n\"
 send \"exit\n\"
 interact
 "
+fi

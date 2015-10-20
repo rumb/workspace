@@ -23,13 +23,17 @@ HOSTS+=("${CONTROLLER}")
 HOSTS+=("${SWITCH[@]}")
 HOSTS+=("${HOST[@]}")
 
-expect -c "
-set timeout -1
-spawn ssh ${USERNAME}@${SWITCH}
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@${SWITCH}'s password:\"
-send \"${PASSWORD}\n\"
+flag=false
+
+if $flag ; then
+
+  expect -c "
+  set timeout -1
+  spawn ssh ${USERNAME}@${SWITCH}
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@${SWITCH}'s password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@${SWITCH}'s password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -41,13 +45,13 @@ interact
 
 for i in "${SWITCH[@]}"
 do
-expect -c "
-set timeout -1
-spawn ssh ${USERNAME}@$i
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@$i's password:\"
-send \"${PASSWORD}\n\"
+  expect -c "
+  set timeout -1
+  spawn ssh ${USERNAME}@$i
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@$i's password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@$i's password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -58,16 +62,17 @@ send \"exit\n\"
 interact
 "
 done
+fi
 
 for i in "${HOSTS[@]}"
 do
-expect -c "
-set timeout -1
-spawn ssh ${USERNAME}@$i
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@$i's password:\"
-send \"${PASSWORD}\n\"
+  expect -c "
+  set timeout -1
+  spawn ssh ${USERNAME}@$i
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@$i's password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@$i's password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -78,13 +83,14 @@ interact
 "
 done
 
-expect -c "
-set timeout -1
-spawn ssh -l ${USERNAME} ${SWITCH}
-expect \"(yes/no)?\" {
-send \"yes\n\"
-expect \"${USERNAME}@${SWITCH}'s password:\"
-send \"${PASSWORD}\n\"
+if $flag ; then
+  expect -c "
+  set timeout -1
+  spawn ssh -l ${USERNAME} ${SWITCH}
+  expect \"(yes/no)?\" {
+  send \"yes\n\"
+  expect \"${USERNAME}@${SWITCH}'s password:\"
+  send \"${PASSWORD}\n\"
 } \"${USERNAME}@${SWITCH}'s password:\" {
 send \"${PASSWORD}\n\"
 }
@@ -93,3 +99,5 @@ send \"ovs-vsctl del-port ovs eth4\n\"
 send \"exit\n\"
 interact
 "
+
+fi
